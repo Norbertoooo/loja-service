@@ -1,7 +1,13 @@
 micronaut:
   application:
     name: lojaService
+  server:
+    port: 8081
 netty:
   default:
     allocator:
       max-order: 3
+redis:
+  uri: redis://localhost
+  port: 6379
+  password: lojaService

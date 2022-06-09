@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+
+  loja-redis:
+    container_name: loja-redis
+    image: redis
+    command: redis-server --requirepass
+    ports:
+      - "6379:6379"
