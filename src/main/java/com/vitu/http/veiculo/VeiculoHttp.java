@@ -1,7 +1,7 @@
 package com.vitu.http.veiculo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.vitu.web.dto.VeiculoDto;
+import com.vitu.web.dto.response.Veiculo;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
@@ -13,5 +13,5 @@ import io.micronaut.retry.annotation.CircuitBreaker;
 public interface VeiculoHttp {
 
     @Get("/{id}")
-    HttpResponse<VeiculoDto> buscarPorId(@PathVariable Long id) throws JsonProcessingException;
+    HttpResponse<Veiculo> buscarPorId(@PathVariable Long id) throws JsonProcessingException;
 }

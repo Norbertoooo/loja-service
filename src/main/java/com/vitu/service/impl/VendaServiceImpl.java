@@ -1,9 +1,11 @@
 package com.vitu.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vitu.producer.VendaProducer;
 import com.vitu.service.VeiculoService;
 import com.vitu.service.VendaService;
-import com.vitu.web.dto.VeiculoDto;
+import com.vitu.web.dto.response.Veiculo;
 import com.vitu.web.dto.request.VendaRequestDto;
 import com.vitu.web.dto.response.Parcela;
 import com.vitu.web.dto.response.Venda;
@@ -13,21 +15,27 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Singleton
 public class VendaServiceImpl implements VendaService {
 
     private final VeiculoService veiculoService;
+    private final VendaProducer vendaProducer;
 
-    public VendaServiceImpl(VeiculoService veiculoService) {
+    private final ObjectMapper objectMapper;
+
+    public VendaServiceImpl(VeiculoService veiculoService, VendaProducer vendaProducer, ObjectMapper objectMapper) {
         this.veiculoService = veiculoService;
+        this.vendaProducer = vendaProducer;
+        this.objectMapper = objectMapper;
     }
 
     @Override
-    public void realizarVenda(VendaRequestDto vendaRequestDto) throws JsonProcessingException {
-        VeiculoDto veiculoDtoHttpResponse = veiculoService.obterVeiculo(vendaRequestDto.veiculoId());
+    public Venda realizarVenda(VendaRequestDto vendaRequestDto) throws JsonProcessingException {
+        Veiculo veiculoHttpResponse = veiculoService.obterVeiculo(vendaRequestDto.veiculoId());
 
-        System.out.println(veiculoDtoHttpResponse);
+        System.out.println(veiculoHttpResponse);
 
         BigDecimal valorParcela = vendaRequestDto.valor()
                 .divide(BigDecimal.valueOf(vendaRequestDto.quantidadeParcelas()));
@@ -41,7 +49,14 @@ public class VendaServiceImpl implements VendaService {
             dataVencimento = dataVencimento.plusMonths(1);
         }
 
-        Venda venda = new Venda(vendaRequestDto.cliente(), veiculoDtoHttpResponse, vendaRequestDto.valor(), parcelas);
+        Venda venda = new Venda(vendaRequestDto.cliente(), veiculoHttpResponse, vendaRequestDto.valor(), parcelas);
+        confirmarVenda(venda);
         System.out.println(venda);
+        return venda;
+    }
+
+    private void confirmarVenda(Venda venda) throws JsonProcessingException {
+        String vendaJson = objectMapper.writeValueAsString(venda);
+        vendaProducer.produzirVenda(UUID.randomUUID().toString(), vendaJson);
     }
 }
