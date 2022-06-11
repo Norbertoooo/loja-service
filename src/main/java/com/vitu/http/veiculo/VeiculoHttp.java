@@ -9,7 +9,7 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.retry.annotation.CircuitBreaker;
 
 @CircuitBreaker
-@Client(id = "http://localhost:8080/veiculos")
+@Client(id = "veiculo-service", path = "/veiculos")
 public interface VeiculoHttp {
 
     @Get("/{id}")

@@ -17,3 +17,10 @@ redis:
 kafka:
   bootstrap:
     servers: localhost:9092
+
+consul:
+  client:
+    registration:
+      enabled: true
+    default-zone:
+      - localhost:8500
