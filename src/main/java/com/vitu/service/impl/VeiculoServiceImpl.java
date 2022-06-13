@@ -2,6 +2,7 @@ package com.vitu.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vitu.config.RedisConfig;
 import com.vitu.http.veiculo.VeiculoHttp;
 import com.vitu.service.VeiculoService;
 import com.vitu.web.dto.response.Veiculo;
@@ -17,9 +18,12 @@ public class VeiculoServiceImpl implements VeiculoService {
 
     private final ObjectMapper objectMapper;
 
-    public VeiculoServiceImpl(VeiculoHttp veiculoHttp, ObjectMapper objectMapper) {
+    private final RedisConfig redisConfig;
+
+    public VeiculoServiceImpl(VeiculoHttp veiculoHttp, ObjectMapper objectMapper, RedisConfig redisConfig) {
         this.veiculoHttp = veiculoHttp;
         this.objectMapper = objectMapper;
+        this.redisConfig = redisConfig;
     }
 
     @Override
@@ -30,8 +34,7 @@ public class VeiculoServiceImpl implements VeiculoService {
     }
 
     public void enviarParaCache(Veiculo veiculo) throws JsonProcessingException {
-        JedisPool jedisPool = new JedisPool(new JedisPoolConfig(), "localhost", 6379, 2000, "lojaService");
-        Jedis resource = jedisPool.getResource();
-        resource.set(veiculo.id().toString(), objectMapper.writeValueAsString(veiculo));
+        redisConfig.set(veiculo.id().toString(), objectMapper.writeValueAsString(veiculo));
     }
+
 }
