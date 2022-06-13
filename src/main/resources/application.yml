@@ -2,7 +2,7 @@ micronaut:
   application:
     name: lojaService
   server:
-    port: 8081
+    port: ${SERVER_PORT:8081}
 
 netty:
   default:
@@ -10,17 +10,17 @@ netty:
       max-order: 3
 
 redis:
-  uri: redis://localhost
-  port: 6379
-  password: lojaService
+  uri: ${REDIS_URI:localhost}
+  port: ${REDIS_PORT:6379}
+  password: ${REDIS_PASSWORD:lojaService}
 
 kafka:
   bootstrap:
-    servers: localhost:9092
+    servers: ${KAFKA_SERVER:localhost}:${KAFKA_PORT:9092}
 
 consul:
   client:
     registration:
-      enabled: true
+      enabled: ${CONSUL_ENABLED:true}
     default-zone:
-      - localhost:8500
+      - ${CONSUL_DEFAULT_ZONE:localhost}:${CONSUL_PORT:8500}
